@@ -4,13 +4,15 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private InputAction moveAction;
+    private InputAction move;
+    private InputAction interact;
     private InputAction look;
-    private Transform referenceCamera;
+    
+    public Transform referenceCamera;
 
     public PlayerInput input;
     public CharacterController controller;
-    public bool canMove;
+    public bool canMove = true;
     
     [Header("Player Stats")]
     public float moveSpeed = 5f;
@@ -24,16 +26,42 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
-        moveAction = input.currentActionMap.FindAction("Move");
+        move = input.currentActionMap.FindAction("Move");
         look = input.currentActionMap.FindAction("Look");
+        interact = input.currentActionMap.FindAction("Interact");
+        
+        // ------------ ui 
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    private void Start()
+    {
+        input.actions.Disable();
+        input.currentActionMap?.Enable();
     }
 
     void Update()
     {
         if (canMove)
         {
-            Vector2 moveInput = moveAction.ReadValue<Vector2>();
+            Vector2 moveInput = move.ReadValue<Vector2>();
+            Debug.Log(moveInput);
             isSprinting = input.actions["Sprint"].ReadValue<float>() > 0.1;
+            
+            // calculate movement direction based on look direction
+            Vector3 forward = Vector3.ProjectOnPlane(referenceCamera.forward, Vector3.up).normalized;
+            Vector3 right = Vector3.ProjectOnPlane(referenceCamera.right, Vector3.up).normalized;
+            Vector3 direction = forward * moveInput.y + right * moveInput.x;
+            
+            // smooth movement rotation
+            if (direction != Vector3.zero)
+                transform.forward = Vector3.Slerp(transform.forward, direction, 10 * Time.deltaTime);
+            
+            // velocity berechnen
+            direction *= isSprinting ? sprintSpeed : moveSpeed;
+            yVelocity -= gravity * Time.deltaTime;
+            direction.y = yVelocity;
         }
     }
 }
