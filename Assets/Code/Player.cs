@@ -62,6 +62,12 @@ public class Player : MonoBehaviour
             direction *= isSprinting ? sprintSpeed : moveSpeed;
             yVelocity -= gravity * Time.deltaTime;
             direction.y = yVelocity;
+            
+            if (controller.Move(direction * Time.deltaTime) == CollisionFlags.Below)
+                yVelocity = -2;
+            
+            // set current speed based on isSprinting
+            currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
         }
     }
 }
