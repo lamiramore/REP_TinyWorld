@@ -50,6 +50,11 @@ public class MenuManager : MonoBehaviour
             ShowPauseMenu();
         }
         
+        PausePanel.SetActive(isPaused);
+        Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = isPaused;
+        
+        
         //cursor noch visable & locken
     }
     
