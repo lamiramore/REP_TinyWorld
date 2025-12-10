@@ -1135,6 +1135,8 @@ MonoBehaviour:
   gravity: 16
   fastFallMultiplier: 4
   yVelocity: 0
+  dashParticles: {fileID: 0}
+  movementParticles: {fileID: 0}
   isSprinting: 0
 --- !u!4 &466118460
 Transform:
