@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -28,15 +29,20 @@ public class Player : MonoBehaviour
     public float fastFallMultiplier;
     public float yVelocity;
     
+    [Header("Effects")]
+    public ParticleSystem dashParticles;
+    public ParticleSystem movementParticles;
+    
+    
     public bool isSprinting = false;
     private bool isDashing = false;
     private bool dashOnCooldown = false;
     private float dashTimer = 0f;
-    // private float currentDashSpeed = 0f;
     private bool dashFading = false;
     private float dashFadingTimer = 0.2f;
-    
 
+    private float defaultFinalSpeed;
+    private Coroutine speedEffectCoroutine;
 
     void Awake()
     {
@@ -45,7 +51,6 @@ public class Player : MonoBehaviour
         interact = input.currentActionMap.FindAction("Interact");
         jump = input.currentActionMap.FindAction("Jump");
         dash = input.currentActionMap.FindAction("Dash");
-        
         
         // ------------ ui 
         Cursor.lockState = CursorLockMode.Locked;
@@ -56,6 +61,8 @@ public class Player : MonoBehaviour
     {
         input.actions.Disable();
         input.currentActionMap?.Enable();
+
+        defaultFinalSpeed = finalSpeed;
     }
 
     void Update()
@@ -64,6 +71,18 @@ public class Player : MonoBehaviour
         bool isMoving = moveInput.sqrMagnitude > 0.1f;
         float acceleration = finalSpeed / accelTime;
         float horizontalInfluence = 0.35f;
+        
+        if (movementParticles != null)
+        {
+            if (isMoving && controller.isGrounded)
+            {
+                if (!movementParticles.isPlaying) movementParticles.Play();
+            }
+            else
+            {
+                if (movementParticles.isPlaying) movementParticles.Stop();
+            }
+        }
         
         // movement ----------------------------------------------------------------------------------------------------
         if (canMove)
@@ -82,7 +101,6 @@ public class Player : MonoBehaviour
 
                 if (dashTimer <= 0f)
                 {
-                    
                     isDashing = false;
                     Invoke(nameof(ResetDashCooldown), dashCooldown);
                 }
@@ -93,8 +111,6 @@ public class Player : MonoBehaviour
             // movement ------------------------------------------------------------------------------------------------
             if (isMoving)
             {
-                Debug.Log(moveInput);
-                
                 // dash starten 
                 if (dash.WasPressedThisFrame() && !dashOnCooldown)
                 {
@@ -110,13 +126,16 @@ public class Player : MonoBehaviour
 
                 // smooth movement rotation
                 if (direction != Vector3.zero)
-                    //transform.forward = Vector3.Slerp(transform.forward, direction, 5 * Time.deltaTime);^^
                     transform.forward = Vector3.Slerp(transform.forward, direction, 100 * Time.deltaTime);
 
                 // acceleration
                 if (currentSpeed < finalSpeed)
                 {
                     currentSpeed = Mathf.MoveTowards(currentSpeed, finalSpeed, acceleration * Time.deltaTime);
+                }
+                else if (currentSpeed > finalSpeed)
+                {
+                    currentSpeed = Mathf.MoveTowards(currentSpeed, finalSpeed, (acceleration * 2) * Time.deltaTime);
                 }
 
                 // set velocity ----------------------------------------------------------------------------------------
@@ -128,7 +147,6 @@ public class Player : MonoBehaviour
                 if (yVelocity < 0f)
                 {
                     currentGravity *= fastFallMultiplier;
-                    Debug.Log("fastfall");
                 }
                 
                 yVelocity -= currentGravity * Time.deltaTime;
@@ -150,7 +168,8 @@ public class Player : MonoBehaviour
 
     void StartDash()
     {
-        Debug.Log("oops i fartet");
+        Debug.Log("Dash started");
+        if (dashParticles != null) dashParticles.Play();
         isDashing = true;
         dashOnCooldown = true;
         dashTimer = dashDuration;
@@ -158,8 +177,23 @@ public class Player : MonoBehaviour
 
     void ResetDashCooldown()
     {
-        
         dashOnCooldown = false;
     }
-}
 
+    public void ApplySpeedModifier(float multiplier, float duration)
+    {
+        if (speedEffectCoroutine != null) StopCoroutine(speedEffectCoroutine);
+        speedEffectCoroutine = StartCoroutine(SpeedRoutine(multiplier, duration));
+    }
+
+    IEnumerator SpeedRoutine(float multiplier, float duration)
+    {
+        finalSpeed = defaultFinalSpeed * multiplier;
+        currentSpeed = finalSpeed;
+
+        yield return new WaitForSeconds(duration);
+
+        finalSpeed = defaultFinalSpeed;
+        speedEffectCoroutine = null;
+    }
+}
