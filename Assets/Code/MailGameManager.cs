@@ -100,7 +100,9 @@ public class MailGameManager : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(timeRemaining / 60);
         int seconds = Mathf.FloorToInt(timeRemaining % 60);
-        timerText.text = $"{minutes:00}:{seconds:00}";
+        int milliseconds = Mathf.FloorToInt((timeRemaining * 100) % 100);
+        
+        timerText.text = $"{minutes:00}:{seconds:00}:{milliseconds:00}";
     }
 
     void GameOver()

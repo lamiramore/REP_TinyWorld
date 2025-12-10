@@ -5,7 +5,9 @@ public class Mailbox : Interactable
     [Header("Visual")]
     public GameObject letterVisual;
     
-
+    [Header("Effects")]
+    public ParticleSystem collectParticles;
+    
     private bool hasLetter = false;
 
     void Start()
@@ -29,6 +31,8 @@ public class Mailbox : Interactable
         hasLetter = false;
         UpdateVisual();
 
+        if(collectParticles != null) collectParticles.Play();
+        
         if (MailGameManager.instance != null)
         {
             MailGameManager.instance.CollectLetter();

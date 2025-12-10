@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+// THIS IS THE "COIN"
 public class Boost : MonoBehaviour
 {
     [Header("Settings")]
@@ -8,6 +8,9 @@ public class Boost : MonoBehaviour
     public float bonusTime = 5f;
     public float respawnTime = 10f;
 
+    [Header("Effects")]
+    public ParticleSystem collectParticles;
+    
     private Collider myCollider;
     private Renderer myRenderer;
 
@@ -24,6 +27,12 @@ public class Boost : MonoBehaviour
             if (MailGameManager.instance != null)
             {
                 MailGameManager.instance.AddBoost(bonusPoints, bonusTime);
+                
+                if (AudioManager.instance != null) 
+                    AudioManager.instance.PlayBoost();
+
+                if(collectParticles != null) collectParticles.Play();
+                
                 StartCoroutine(RespawnRoutine());
             }
         }

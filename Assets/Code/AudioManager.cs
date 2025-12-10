@@ -5,16 +5,18 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
 
     [Header("Sources")]
-    public AudioSource musicSource;   // Mussic, source wiht 'Loop' checked
-    public AudioSource sfxSource;     // sfx one shot
-    public AudioSource movementSource; // footsteps source
+    public AudioSource musicSource;
+    public AudioSource sfxSource;
+    public AudioSource movementSource;
 
     [Header("Clips - Atmosphere")]
     public AudioClip backgroundMusic;
     
     [Header("Clips - SFX")]
-    public AudioClip collectClip;
-    public AudioClip boostClip;
+    public AudioClip collectClip;    
+    public AudioClip boostClip;     
+    public AudioClip speedPadClip;  
+    public AudioClip crashClip;      
     public AudioClip footstepClip;
 
     void Awake()
@@ -25,7 +27,6 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        // cozy tunes
         if (backgroundMusic != null)
         {
             musicSource.clip = backgroundMusic;
@@ -33,22 +34,33 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // picking up a Letter
     public void PlayCollect()
     {
-        if (collectClip != null) 
-            sfxSource.PlayOneShot(collectClip);
+        if (collectClip != null) sfxSource.PlayOneShot(collectClip);
     }
 
+    // Floating Coin/Time Boost
     public void PlayBoost()
     {
-        if (boostClip != null) 
-            sfxSource.PlayOneShot(boostClip);
+        if (boostClip != null) sfxSource.PlayOneShot(boostClip);
     }
 
-    // important, call this from Player Update()
+    // Speed Pad
+    public void PlaySpeedPad()
+    {
+        if (speedPadClip != null) sfxSource.PlayOneShot(speedPadClip);
+    }
+
+    // snowman hit
+    public void PlayCrash()
+    {
+        if (crashClip != null) sfxSource.PlayOneShot(crashClip);
+    }
+
+    //footsteps
     public void HandleFootsteps(bool isMoving, float currentSpeed)
     {
-        // so it only triggers when moving fast enough
         if (isMoving && currentSpeed > 0.5f)
         {
             if (!movementSource.isPlaying)
@@ -56,16 +68,11 @@ public class AudioManager : MonoBehaviour
                 movementSource.clip = footstepClip;
                 movementSource.Play();
             }
-            
-            // Slight pitch variation based on speed
             movementSource.pitch = 0.9f + (currentSpeed / 20f); 
         }
         else
         {
-            if (movementSource.isPlaying)
-            {
-                movementSource.Stop();
-            }
+            if (movementSource.isPlaying) movementSource.Stop();
         }
     }
 }
