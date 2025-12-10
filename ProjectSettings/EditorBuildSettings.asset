@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: a87d534120861cc4183d31145185ceee
   - enabled: 1
+    path: Assets/Scenes/Terrain.unity
+    guid: 08899c2697446944188f4bdb1395f45b
+  - enabled: 1
     path: Assets/Scenes/Mira.unity
     guid: 4689296fd01ec604eb240fc745ca1fc9
   m_configObjects:
