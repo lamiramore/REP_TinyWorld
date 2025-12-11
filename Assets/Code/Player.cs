@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     
     public Transform referenceCamera;
 
+    public Animator animator;
     public PlayerInput input;
     public CharacterController controller;
     public bool canMove = true;
@@ -92,6 +93,7 @@ public class Player : MonoBehaviour
             // dashstate -----------------------------------------------------------------------------------------------
             if (isDashing)
             {
+                
                 dashTimer -=Time.deltaTime;
                 
                 Vector3 dashMovement = transform.forward * dashStrength; // movement nach vorne
@@ -101,6 +103,7 @@ public class Player : MonoBehaviour
 
                 if (dashTimer <= 0f)
                 {
+                    animator.SetBool("dashing", false);
                     isDashing = false;
                     Invoke(nameof(ResetDashCooldown), dashCooldown);
                 }
@@ -155,6 +158,10 @@ public class Player : MonoBehaviour
                 if (controller.Move(direction * Time.deltaTime) == CollisionFlags.Below) yVelocity = -2;
             }
             else currentSpeed = 0f;
+            
+            // Animator ------------------------------------------------------------------------------------------------
+            animator.SetFloat("speed", Mathf.Abs(moveInput.magnitude * currentSpeed));
+            animator.SetFloat("yVelocity", yVelocity);
         }
     }
     
@@ -168,6 +175,7 @@ public class Player : MonoBehaviour
 
     void StartDash()
     {
+        animator.SetBool("dashing", true);
         Debug.Log("Dash started");
         if (dashParticles != null) dashParticles.Play();
         isDashing = true;
