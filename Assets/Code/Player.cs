@@ -39,8 +39,6 @@ public class Player : MonoBehaviour
     private bool isDashing = false;
     private bool dashOnCooldown = false;
     private float dashTimer = 0f;
-    private bool dashFading = false;
-    private float dashFadingTimer = 0.2f;
     private bool wasGroundedLastFrame = false;
 
     private float defaultFinalSpeed;
