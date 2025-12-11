@@ -44,6 +44,10 @@ public class Player : MonoBehaviour
     private float defaultFinalSpeed;
     private Coroutine speedEffectCoroutine;
     
+    [Header("Dynamic Modifiers")]
+    public float speedModifier = 1f;
+    public float environmentSpeedMultiplier = 1f;
+    
     //Um Extern auf den Player Movement zu zugreifen /Powerups und Hürden
     public void AddExternalVerticalBoost(float amount)
     {
@@ -76,6 +80,10 @@ public class Player : MonoBehaviour
         Vector2 moveInput = move.ReadValue<Vector2>();
         bool isMoving = moveInput.sqrMagnitude > 0.1f;
         float acceleration = finalSpeed / accelTime;
+        float modifiedFinalSpeed = defaultFinalSpeed * speedModifier;
+        finalSpeed = modifiedFinalSpeed;
+        float effectiveFinalSpeed = defaultFinalSpeed * environmentSpeedMultiplier;
+        finalSpeed = effectiveFinalSpeed;
         float horizontalInfluence = 0.35f;
         
         if (movementParticles != null)
