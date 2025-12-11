@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     public float gravity;
     public float fastFallMultiplier;
     public float yVelocity;
+    public float forwardAngleLimit; // das was ich mit joao gemacht habe
     
     [Header("Effects")]
     public ParticleSystem dashParticles;
@@ -77,6 +78,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        animator.SetBool("grounded", controller.isGrounded);
+        
         Vector2 moveInput = move.ReadValue<Vector2>();
         bool isMoving = moveInput.sqrMagnitude > 0.1f;
         float acceleration = finalSpeed / accelTime;
@@ -84,7 +87,7 @@ public class Player : MonoBehaviour
         finalSpeed = modifiedFinalSpeed;
         float effectiveFinalSpeed = defaultFinalSpeed * environmentSpeedMultiplier;
         finalSpeed = effectiveFinalSpeed;
-        float horizontalInfluence = 0.35f;
+        float horizontalInfluence = 0.3f;
         
         if (movementParticles != null)
         {
@@ -98,10 +101,12 @@ public class Player : MonoBehaviour
             }
         }
         
+        JumpAction();
+        
         // movement ----------------------------------------------------------------------------------------------------
         if (canMove)
         {
-            JumpAction();
+            
             
             // dashstate -----------------------------------------------------------------------------------------------
             if (isDashing)
@@ -127,6 +132,8 @@ public class Player : MonoBehaviour
 
                 return; // cancel movement during dash
             }
+
+            Vector3 direction = Vector3.zero;
             
             // movement ------------------------------------------------------------------------------------------------
             if (isMoving)
@@ -141,7 +148,17 @@ public class Player : MonoBehaviour
                 // calculate movement direction based on look direction
                 Vector3 forward = Vector3.ProjectOnPlane(referenceCamera.forward, Vector3.up).normalized;
                 Vector3 right = Vector3.ProjectOnPlane(referenceCamera.right, Vector3.up).normalized;
-                Vector3 direction = forward * moveInput.y + right * (moveInput.x * horizontalInfluence);
+
+                
+                if (Mathf.Abs(moveInput.y) <= forwardAngleLimit)
+                {
+                    direction = forward * moveInput.y + right * moveInput.x;
+                }
+                else
+                {
+                  direction = forward * moveInput.y + right * (moveInput.x * horizontalInfluence);  
+                }
+                
 
 
                 // smooth movement rotation
@@ -158,24 +175,24 @@ public class Player : MonoBehaviour
                     currentSpeed = Mathf.MoveTowards(currentSpeed, finalSpeed, (acceleration * 2) * Time.deltaTime);
                 }
 
-                // set velocity ----------------------------------------------------------------------------------------
-                direction *= currentSpeed;  // movevelocity
                 
-                float currentGravity = gravity;
-
-                // fastfall --------------------------------------------------------------------------------------------
-                if (yVelocity < 0f)
-                {
-                    currentGravity *= fastFallMultiplier;
-                }
-                
-                yVelocity -= currentGravity * Time.deltaTime;
-                direction.y = yVelocity;
-
-                if (controller.Move(direction * Time.deltaTime) == CollisionFlags.Below) yVelocity = -2;
             }
-            else currentSpeed = 0f;
             
+            // set velocity ----------------------------------------------------------------------------------------
+                            direction *= currentSpeed;  // movevelocity
+                            
+                            float currentGravity = gravity;
+            
+                            // fastfall --------------------------------------------------------------------------------------------
+                            if (yVelocity < 0f)
+                            {
+                                currentGravity *= fastFallMultiplier;
+                            }
+                            
+                            yVelocity -= currentGravity * Time.deltaTime;
+                            direction.y = yVelocity;
+            
+                            if (controller.Move(direction * Time.deltaTime) == CollisionFlags.Below) yVelocity = -2;
             // Animator ------------------------------------------------------------------------------------------------
             animator.SetFloat("speed", Mathf.Abs(moveInput.magnitude * currentSpeed));
             animator.SetFloat("yVelocity", yVelocity);
