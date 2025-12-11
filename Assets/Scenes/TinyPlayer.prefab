@@ -101,7 +101,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 14023aa2696fa3243a2c327f9bd5728c, type: 3}
   m_Controller: {fileID: 9100000, guid: c31bdbb984ed17b49905b615ad6d1f35, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -165,10 +165,10 @@ MonoBehaviour:
   input: {fileID: 1899263744432790723}
   controller: {fileID: 6294134763797466068}
   canMove: 1
-  finalSpeed: 40
+  finalSpeed: 15
   currentSpeed: 0
   jumpStrength: 10
-  dashStrength: 80
+  dashStrength: 40
   dashDuration: 0.2
   dashCooldown: 0
   accelTime: 2

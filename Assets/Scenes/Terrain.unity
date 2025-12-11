@@ -1799,6 +1799,28 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &224418937 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1899263744432790723, guid: 1b77cc7734d8c6c468c2a8c3f9dbafbc, type: 3}
+  m_PrefabInstance: {fileID: 41303864}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+--- !u!114 &224418938 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9043885809197887475, guid: 1b77cc7734d8c6c468c2a8c3f9dbafbc, type: 3}
+  m_PrefabInstance: {fileID: 41303864}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bc934e22f2c365408871bf9245a1977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1001 &234544053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15089,8 +15111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3818bd8319aded488f957f998a17e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
-  TinyPlayer: {fileID: 0}
-  input: {fileID: 0}
+  TinyPlayer: {fileID: 224418938}
+  input: {fileID: 224418937}
   BTNResume: {fileID: 2078100743}
   BTNSettings: {fileID: 515777204}
   BTNMainMenu: {fileID: 865949876}
