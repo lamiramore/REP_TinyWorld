@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
     [Header("Effects")]
     public ParticleSystem dashParticles;
     public ParticleSystem movementParticles;
+    public ParticleSystem landingParticles; 
     
     
     public bool isSprinting = false;
@@ -40,9 +41,16 @@ public class Player : MonoBehaviour
     private float dashTimer = 0f;
     private bool dashFading = false;
     private float dashFadingTimer = 0.2f;
+    private bool wasGroundedLastFrame = false;
 
     private float defaultFinalSpeed;
     private Coroutine speedEffectCoroutine;
+    
+    //Um Extern auf den Player Movement zu zugreifen /Powerups und Hürden
+    public void AddExternalVerticalBoost(float amount)
+    {
+        yVelocity = amount;  
+    }
 
     void Awake()
     {
@@ -104,6 +112,10 @@ public class Player : MonoBehaviour
                 {
                     animator.SetBool("dashing", false);
                     isDashing = false;
+                    
+                    if (dashParticles != null && dashParticles.isPlaying)
+                        dashParticles.Stop();
+                    
                     Invoke(nameof(ResetDashCooldown), dashCooldown);
                 }
 
@@ -162,6 +174,15 @@ public class Player : MonoBehaviour
             animator.SetFloat("speed", Mathf.Abs(moveInput.magnitude * currentSpeed));
             animator.SetFloat("yVelocity", yVelocity);
         }
+        
+        // Landing Particles ----------------------------------------------------------
+        if (!wasGroundedLastFrame && controller.isGrounded)
+        {
+            if (landingParticles != null)
+                landingParticles.Play();
+        }
+        
+        wasGroundedLastFrame = controller.isGrounded;
     }
     
     void JumpAction()
