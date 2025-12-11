@@ -391,6 +391,10 @@ PrefabInstance:
       value: TinyPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 9043885809197887475, guid: 1b77cc7734d8c6c468c2a8c3f9dbafbc, type: 3}
+      propertyPath: finalSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043885809197887475, guid: 1b77cc7734d8c6c468c2a8c3f9dbafbc, type: 3}
       propertyPath: referenceCamera
       value: 
       objectReference: {fileID: 470733962}
